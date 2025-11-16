@@ -39,7 +39,7 @@ struct ContentView: View {
     @State private var isLoading = false
     @State private var filesProcessed = 0
     @State private var duplicateHashes: Set<String> = []
-    @State private var hideUniqueFiles = false
+    @State private var hideUniqueFiles = true
     @State private var isDropTargeted = false
     @State private var quickLookURL: URL?
     @State private var scannedFolderURLs: Set<URL> = []
@@ -132,7 +132,7 @@ struct ContentView: View {
             .mapValues(\.count)
         duplicateHashes = Set(hashCounts.filter { $0.value > 1 && $0.key != "Error" }.keys)
     }
-    
+
     private func addFiles(_ newFiles: [FileItem]) {
         let existingPaths = Set(files.map { $0.url.path })
         let uniqueNewFiles = newFiles.filter { !existingPaths.contains($0.url.path) }
@@ -140,7 +140,7 @@ struct ContentView: View {
         files = files.sorted(using: sortOrder)
         recalculateDuplicates()
     }
-    
+
     private func loadFiles(from folderURL: URL? = nil) {
         let targetURL = folderURL ?? self.folderURL
         guard let targetURL else { return }
@@ -177,7 +177,7 @@ struct ContentView: View {
         recalculateDuplicates()
         selectedFileIDs.removeAll()
     }
-    
+
     private func refreshAllFolders() {
         guard !scannedFolderURLs.isEmpty else { return }
         
