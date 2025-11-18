@@ -132,7 +132,7 @@ struct ContentView: View {
             .mapValues(\.count)
         duplicateHashes = Set(hashCounts.filter { $0.value > 1 && $0.key != "Error" }.keys)
     }
-
+    
     private func addFiles(_ newFiles: [FileItem]) {
         let existingPaths = Set(files.map { $0.url.path })
         let uniqueNewFiles = newFiles.filter { !existingPaths.contains($0.url.path) }
@@ -140,7 +140,7 @@ struct ContentView: View {
         files = files.sorted(using: sortOrder)
         recalculateDuplicates()
     }
-
+    
     private func loadFiles(from folderURL: URL? = nil) {
         let targetURL = folderURL ?? self.folderURL
         guard let targetURL else { return }
@@ -156,7 +156,7 @@ struct ContentView: View {
             isLoading = false
         }
     }
-
+    
     private func showInFinder(_ selectedIDs: Set<UUID>) {
         let urls = displayedFiles
             .filter { selectedIDs.contains($0.id) }
@@ -165,19 +165,27 @@ struct ContentView: View {
         guard !urls.isEmpty else { return }
         NSWorkspace.shared.activateFileViewerSelecting(urls)
     }
-
+    
     private func moveToTrash(_ selectedIDs: Set<UUID>) {
         let itemsToTrash = displayedFiles.filter { selectedIDs.contains($0.id) }
+        var successfullyTrashed: [FileItem] = []
         
         for item in itemsToTrash {
-            try? FileManager.default.trashItem(at: item.url, resultingItemURL: nil)
+            do {
+                try FileManager.default.trashItem(at: item.url, resultingItemURL: nil)
+                successfullyTrashed.append(item)
+            } catch {
+                NSAlert(error: error).runModal()
+            }
         }
         
-        files.removeAll { itemsToTrash.contains($0) }
-        recalculateDuplicates()
-        selectedFileIDs.removeAll()
+        if !successfullyTrashed.isEmpty {
+            files.removeAll { successfullyTrashed.contains($0) }
+            recalculateDuplicates()
+            selectedFileIDs.removeAll()
+        }
     }
-
+    
     private func refreshAllFolders() {
         guard !scannedFolderURLs.isEmpty else { return }
         
