@@ -391,6 +391,7 @@ extension ContentView {
                 }
             }
         }
+        .width(ideal: 400)
     }
     
     private var kindColumn: some TableColumnContent<FileItem, KeyPathComparator<FileItem>> {
@@ -398,6 +399,7 @@ extension ContentView {
             Text(item.kind)
                 .foregroundStyle(.secondary)
         }
+        .width(ideal: 150)
     }
     
     private var dateModifiedColumn: some TableColumnContent<FileItem, KeyPathComparator<FileItem>> {
@@ -406,6 +408,7 @@ extension ContentView {
                 .foregroundStyle(.secondary)
                 .help(item.modified.formatted(date: .long, time: .shortened))
         }
+        .width(ideal: 150)
     }
     
     private var sizeColumn: some TableColumnContent<FileItem, KeyPathComparator<FileItem>> {
@@ -415,8 +418,9 @@ extension ContentView {
                 countStyle: .file
             ))
             .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .trailing)
+            .frame(maxWidth: 80, alignment: .trailing)
         }
+        .width(ideal: 100)
     }
     
     private var hashColumn: some TableColumnContent<FileItem, KeyPathComparator<FileItem>> {
@@ -426,6 +430,7 @@ extension ContentView {
                 .truncationMode(.middle)
                 .foregroundStyle(duplicateHashes.contains(item.hash) ? .red : .secondary)
         }
+        .width(ideal: 100)
     }
 }
 
